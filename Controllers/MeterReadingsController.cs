@@ -13,7 +13,7 @@ namespace EnergyDashboardAPI1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Admin,AccountManager")]
     public class MeterReadingsController : ControllerBase
     {
         private readonly EnergyDbContext _context;

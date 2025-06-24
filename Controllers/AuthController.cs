@@ -31,13 +31,21 @@ namespace EnergyDashboardAPI1.Controllers
                     return BadRequest("Username and password are required.");
 
                 var user = await _context.Users
+                    .Include(u => u.Role) 
                     .FirstOrDefaultAsync(u => u.Username.ToLower() == request.Username.ToLower());
 
                 if (user == null || user.Password != request.Password)
                     return Unauthorized("Invalid username or password.");
 
-                var token = GenerateJwtToken(user.Username);
-                return Ok(new { token, message = "Login successful", user.Username });
+                var token = GenerateJwtToken(user);
+
+                return Ok(new
+                {
+                    token,
+                    message = "Login successful",
+                    user.Username,
+                    role = user.Role?.RoleName ?? "Unknown"
+                });
             }
             catch (Exception ex)
             {
@@ -45,19 +53,20 @@ namespace EnergyDashboardAPI1.Controllers
             }
         }
 
-        private string GenerateJwtToken(string username)
+        private string GenerateJwtToken(User user)
         {
             var jwtSettings = _config.GetSection("Jwt");
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
+            var roleName = _context.Roles.FirstOrDefault(r => r.RoleId == user.RoleId)?.RoleName ?? "Viewer";
+
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, username), 
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), 
-                new Claim(JwtRegisteredClaimNames.Iss, jwtSettings["Issuer"]),
-                new Claim(JwtRegisteredClaimNames.Aud, jwtSettings["Audience"]) 
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Role, roleName),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
             var token = new JwtSecurityToken(

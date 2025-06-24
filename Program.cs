@@ -13,17 +13,16 @@ namespace EnergyDashboardAPI1
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            //CORS 
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll", policy =>
                 {
-                    policy
-                        .AllowAnyOrigin()
-                        .AllowAnyHeader()
-                        .AllowAnyMethod();
+                    policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
                 });
             });
 
+            // Controller & JSON 
             builder.Services.AddControllers()
                 .AddJsonOptions(options =>
                 {
@@ -31,11 +30,13 @@ namespace EnergyDashboardAPI1
                     options.JsonSerializerOptions.WriteIndented = true;
                 });
 
+            // EF Core 
             builder.Services.AddDbContext<EnergyDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+            // JWT 
             var jwtSettings = builder.Configuration.GetSection("Jwt");
-            var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]); 
+            var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
 
             builder.Services.AddAuthentication(options =>
             {
@@ -63,11 +64,11 @@ namespace EnergyDashboardAPI1
                         return Task.CompletedTask;
                     }
                 };
-
             });
 
             builder.Services.AddAuthorization();
 
+            // Swagger JWT 
             builder.Services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EnergyDashboard API", Version = "v1" });
@@ -99,6 +100,7 @@ namespace EnergyDashboardAPI1
 
             var app = builder.Build();
 
+            //Swagger
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -106,10 +108,11 @@ namespace EnergyDashboardAPI1
             }
 
             app.UseCors("AllowAll");
-            app.UseMiddleware<ErrorHandlingMiddleware>();
-            app.UseHttpsRedirection();
 
-            app.UseAuthentication(); 
+            app.UseMiddleware<ErrorHandlingMiddleware>();
+
+            app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();

@@ -18,6 +18,9 @@ namespace EnergyDashboardAPI1.Models
         public DbSet<MeterReading> MeterReadings { get; set; }
         public DbSet<Space> Spaces { get; set; }
 
+        public DbSet<Role> Roles { get; set; }  
+
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)

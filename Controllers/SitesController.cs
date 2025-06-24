@@ -1,12 +1,14 @@
 ﻿using EnergyDashboardAPI1.Models;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
 namespace EnergyDashboardAPI1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin,EnergyManager")]
     public class SitesController : ControllerBase
     {
         private readonly EnergyDbContext _context;
