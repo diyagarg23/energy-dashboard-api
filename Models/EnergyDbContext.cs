@@ -35,14 +35,21 @@ namespace EnergyDashboardAPI1.Models
             modelBuilder.Entity<Site>(entity =>
             {
                 entity.HasKey(e => e.SiteId).HasName("PK__Sites__B9DCB903D8826677");
-                entity.Property(e => e.SiteId).ValueGeneratedNever().HasColumnName("SiteID");
+
+                entity.Property(e => e.SiteId)
+                      .ValueGeneratedOnAdd() 
+                      .HasColumnName("SiteID");
+
                 entity.Property(e => e.SiteName).HasMaxLength(100);
                 entity.Property(e => e.Address).HasMaxLength(200);
                 entity.Property(e => e.ContactPerson).HasMaxLength(100);
                 entity.Property(e => e.ContactEmail).HasMaxLength(100);
                 entity.Property(e => e.ContactPhone).HasMaxLength(20);
-                entity.Property(e => e.CreatedAt).HasColumnType("datetime").HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.CreatedAt)
+                      .HasColumnType("datetime")
+                      .HasDefaultValueSql("(getdate())");
             });
+
 
             // User
             modelBuilder.Entity<User>(entity =>

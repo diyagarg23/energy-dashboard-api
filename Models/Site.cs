@@ -1,22 +1,32 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace EnergyDashboardAPI1.Models;
-
-public partial class Site
+namespace EnergyDashboardAPI1.Models
 {
-    public int SiteId { get; set; }
+    public class Site
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)] 
+        public int SiteId { get; set; }
 
-    public string SiteName { get; set; } = null!;
+        [Required]
+        public string SiteName { get; set; }
 
-    public string? Address { get; set; }
+        [Required]
+        public string Address { get; set; }
 
-    public string? ContactPerson { get; set; }
+        [Required]
+        public string ContactPerson { get; set; }
 
-    public string? ContactEmail { get; set; }
+        [Required]
+        public string ContactEmail { get; set; }
 
-    public string? ContactPhone { get; set; }
+        [Required]
+        public string ContactPhone { get; set; }
 
-    public DateTime? CreatedAt { get; set; }
-
+        public DateTime? CreatedAt { get; set; }
+    }
 }
